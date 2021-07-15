@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travelers Event Creator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="main">
+    <div id="room-list-container">
+      <button id="save-btn">save</button>
+      <button id="new-room-btn">new room</button>
+      <input id="event-id" placeholder="event-id">
+      <input type="number" id="event-weight" placeholder="event-weight (number)">
+      <div id="room-list"></div>
+    </div>
+    <div id="current-room">
+      <div>
+        <input type="text" id="room-id" placeholder="room-id">
+        <input type="text" id="room-title" placeholder="room title">
+      </div>
+      <textarea id="room-body" placeholder="room body"></textarea>
+      
+      <label for="room-has-exit">
+        <input type="checkbox" id="room-has-exit">
+        has exit
+      </label>
+      <label for="room-is-lootable">
+        <input type="checkbox" id="room-is-lootable">
+        is lootable
+      </label>
+      <hr>
+      
+      <div id="corridores-container">
+        <div>room corridores</div>
+        <input type="button" id="add-corridore-btn" value="add corridore">
+        <div id="corridore-list"></div>
+      </div>
+      
+      <div id="loot-container">
+        <div>room loot</div>
+        <div id="loot-next-id" style="margin: 10px 0;">
+          <select id="loot-next-id-select">
+          </select>
+        </div>
+        <input type="button" id="add-loot-btn" value="add loot" style="margin: 10px 0;">
+        <div id="loot-list"></div>
+      </div>
+
+      <hr>
+
+      <button id="delete-room-btn">Delete Room</button>
+    </div>
+    <div id="room-preview">
+      <div id="event-container">
+        <div id="event-title"></div>
+        <div id="event-body"></div>
+        <div id="event-loot"></div>
+        <div id="event-btns"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/room.js"></script>
+  <script src="src/index.js"></script>
+</body>
+</html>
