@@ -90,10 +90,7 @@ class Room
         {
           btnObj.reqItems = corridore.reqItems;
           btnObj.reqConsume = corridore.reqConsume;
-        }
-        if (this.reqForAll)
-        {
-          btnObj.reqForAll = true;
+          btnObj.reqForAll = this.reqForAll;
         }
         if (corridore.lock)
         {
@@ -111,6 +108,7 @@ class Room
       {
         btnsObj.push("leave");
       }
+      jsonObj.btns = btnsObj;
     }
     else
     {
