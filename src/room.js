@@ -121,7 +121,7 @@ class Room
     };
 
     const regex = /```([\s\S]*?)```/g;
-    this.bodyRendered = currentRoom.body.length === 0 ? "Empty" : currentRoom.body.replace(regex,
+    this.bodyRendered = this.body.length === 0 ? "Empty" : this.body.replace(regex,
     "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
   }
 
