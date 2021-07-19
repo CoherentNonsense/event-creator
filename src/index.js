@@ -325,7 +325,7 @@ function renderPreview()
       btnHTML.classList = "li-btn";
       divOne.classList = "divone-btn";
       divTwo.classList = "divtwo-btn";
-      divTwo.onclick = () => { currentRoom = forRoom; render(); }
+      if (forRoom) divTwo.onclick = () => { currentRoom = forRoom; render(); }
       if (!corridor.req)
       {
         btnText.innerText = corridor.text;
@@ -386,7 +386,7 @@ function renderPreview()
       divOne.classList = "divone-btn";
       divTwo.classList = "divtwo-btn";
       btnText.innerText = "continue";
-      btnText.onclick = () => { currentRoom = forRoom; render(); }
+      if (forRoom) btnText.onclick = () => { currentRoom = forRoom; render(); }
 
       divTwo.append(btnText);
       divOne.append(divTwo);
