@@ -1,5 +1,5 @@
 let currentRoom = null;
-const rooms = [];
+let rooms = [];
 
 
 const roomList = document.getElementById("room-list");
@@ -31,13 +31,13 @@ function renderText()
   isLootableHTML.checked = currentRoom.type === 1;
 }
 
-const corridoreList = document.getElementById("corridore-list");
-function renderCorridores()
+const corridorList = document.getElementById("corridor-list");
+function rendercorridors()
 {
-  corridoreList.innerHTML = "";
-  currentRoom.corridores.forEach((corridore, index) => {
-    const corridoreHTML = document.createElement("div");
-    corridoreHTML.classList = "corridore-item";
+  corridorList.innerHTML = "";
+  currentRoom.corridors.forEach((corridor, index) => {
+    const corridorHTML = document.createElement("div");
+    corridorHTML.classList = "corridor-item";
     // Remove
     const removeHTML = document.createElement("input");
     removeHTML.type = "button";
@@ -47,42 +47,42 @@ function renderCorridores()
     removeHTML.style.marginBottom = "5px";
     removeHTML.style.display = "block";
     removeHTML.onclick = () => {
-      currentRoom.corridores.splice(index, 1);
+      currentRoom.corridors.splice(index, 1);
       render();
     };
     // Text
-    const corridoreTextHTML = document.createElement("input");
-    corridoreTextHTML.type = "text";
-    corridoreTextHTML.placeholder = "text";
-    corridoreTextHTML.value = corridore.text;
-    corridoreTextHTML.onchange = () => { corridore.text = corridoreTextHTML.value; render(); };
+    const corridorTextHTML = document.createElement("input");
+    corridorTextHTML.type = "text";
+    corridorTextHTML.placeholder = "text";
+    corridorTextHTML.value = corridor.text;
+    corridorTextHTML.onchange = () => { corridor.text = corridorTextHTML.value; render(); };
     // Select
-    const corridoreForHTML = document.createElement("select");
-    corridoreForHTML.innerHTML = "<option>corridore to...</option>";
+    const corridorForHTML = document.createElement("select");
+    corridorForHTML.innerHTML = "<option>corridor to...</option>";
     rooms.forEach((room) => {
       if (room.id === currentRoom.id) return;
       const optionHTML = document.createElement("option");
-      if (room.id === corridore.for) optionHTML.selected = "true";
+      if (room.id === corridor.for) optionHTML.selected = "true";
       optionHTML.innerHTML = room.id;
-      corridoreForHTML.append(optionHTML);
+      corridorForHTML.append(optionHTML);
     });
-    corridoreForHTML.onchange = (e) => { corridore.for = e.target.value; render(); };
+    corridorForHTML.onchange = (e) => { corridor.for = e.target.value; render(); };
     // Req
     const reqHTML = document.createElement("input");
     reqHTML.type = "checkbox";
     const labelHTML = document.createElement("label");
-    labelHTML.for = `corridore-req-${index}`;
+    labelHTML.for = `corridor-req-${index}`;
     labelHTML.innerHTML = "<p>require item(s)</p>";
-    reqHTML.id = `corridore-req-${index}`
-    reqHTML.checked = corridore.req;
-    reqHTML.onchange = (e) => { corridore.req = e.target.checked; render(); };
+    reqHTML.id = `corridor-req-${index}`
+    reqHTML.checked = corridor.req;
+    reqHTML.onchange = (e) => { corridor.req = e.target.checked; render(); };
     
     labelHTML.append(reqHTML);
     // DONE
-    corridoreHTML.append(removeHTML);
-    corridoreHTML.append(corridoreTextHTML);
-    corridoreHTML.append(corridoreForHTML);
-    corridoreHTML.append(labelHTML);
+    corridorHTML.append(removeHTML);
+    corridorHTML.append(corridorTextHTML);
+    corridorHTML.append(corridorForHTML);
+    corridorHTML.append(labelHTML);
     if (reqHTML.checked)
     {
       // Consume
@@ -91,9 +91,29 @@ function renderCorridores()
       consumeLabel.innerHTML = "<p>consume items</p>";
       consumeHTML.type = "checkbox";
       consumeLabel.append(consumeHTML);
-      consumeHTML.checked = corridore.reqConsume;
-      consumeHTML.onchange = (e) => { corridore.reqConsume = e.target.checked; render(); };
-      corridoreHTML.append(consumeLabel);
+      consumeHTML.checked = corridor.reqConsume;
+      consumeHTML.onchange = (e) => { corridor.reqConsume = e.target.checked; render(); };
+      corridorHTML.append(consumeLabel);
+
+      // Hide
+      const hideHTML = document.createElement("input");
+      const hideLabel = document.createElement("label");
+      hideLabel.innerHTML = "<p>hide if locked</p>";
+      hideHTML.type = "checkbox";
+      hideLabel.append(hideHTML);
+      hideHTML.checked = corridor.hide;
+      hideHTML.onchange = (e) => { corridor.hide = e.target.checked; render(); };
+      corridorHTML.append(hideLabel);
+
+      // ReqForAll
+      const reqForAllHTML = document.createElement("input");
+      const reqForAllLabel = document.createElement("label");
+      reqForAllLabel.innerHTML = "<p>require for all</p>";
+      reqForAllHTML.type = "checkbox";
+      reqForAllLabel.append(reqForAllHTML);
+      reqForAllHTML.checked = corridor.reqForAll;
+      reqForAllHTML.onchange = (e) => { corridor.reqForAll = e.target.checked; render(); };
+      corridorHTML.append(reqForAllLabel);
   
       
       // Items
@@ -101,13 +121,13 @@ function renderCorridores()
       addReqItem.type = "button";
       addReqItem.value = "add item";
       addReqItem.onclick = () => {
-        corridore.reqItems.push({ id: "", title: "", count: 0 });
+        corridor.reqItems.push({ id: "", title: "", count: 0 });
         render();
       };
-      corridoreHTML.append(addReqItem);
-      corridore.reqItems.forEach((reqItem, index) => {
+      corridorHTML.append(addReqItem);
+      corridor.reqItems.forEach((reqItem, index) => {
         const itemContainer = document.createElement("div");
-        itemContainer.classList = "corridore-item";
+        itemContainer.classList = "corridor-item";
         // Remove
         const removeHTML = document.createElement("input");
         removeHTML.type = "button";
@@ -117,7 +137,7 @@ function renderCorridores()
         removeHTML.style.marginBottom = "5px";
         removeHTML.style.display = "block";
         removeHTML.onclick = () => {
-          corridore.reqItems.splice(index, 1);
+          corridor.reqItems.splice(index, 1);
           render();
         };
         // ID
@@ -152,12 +172,12 @@ function renderCorridores()
         itemContainer.append(itemIdHTML);
         itemContainer.append(itemTitleHTML);
         itemContainer.append(countLabel);
-        corridoreHTML.append(itemContainer);
+        corridorHTML.append(itemContainer);
       });
 
       
     }
-    corridoreList.append(corridoreHTML);
+    corridorList.append(corridorHTML);
   });
 }
 
@@ -169,7 +189,7 @@ function renderLoot()
   lootNextId.innerHTML = "";
   currentRoom.lootTable.forEach((loot, index) => {
     const lootHTML = document.createElement("div");
-    lootHTML.classList = "corridore-item";
+    lootHTML.classList = "corridor-item";
     // Remove
     const removeHTML = document.createElement("input");
     removeHTML.type = "button";
@@ -187,20 +207,25 @@ function renderLoot()
     itemIdHTML.placeholder = "item id";
     itemIdHTML.value = loot.id;
     itemIdHTML.onchange = () => { loot.id = itemIdHTML.value; render(); };
-    // MIN/MAX
+    // MIN/MAX/CHANCE
     const minLabel = document.createElement("label");
     const maxLabel = document.createElement("label");
+    const chanceLabel = document.createElement("label");
     const minHTML = document.createElement("input");
     const maxHTML = document.createElement("input");
+    const chanceHTML = document.createElement("input");
     minLabel.innerHTML = "<p>min</p>";
     maxLabel.innerHTML = "<p>max</p>";
+    chanceLabel.innerHTML = "<p>chance</p>";
     minHTML.type = "number";
     maxHTML.type = "number";
     minHTML.style.width = "50px";
     maxHTML.style.width = "50px";
+    chanceHTML.style.width = "50px";
     minHTML.value = loot.min;
     maxHTML.value = loot.max;
-    minHTML.oninput = () => {
+    chanceHTML.value = loot.chance;
+    minHTML.onchange = () => {
       if (!isNaN(minHTML.value)) {
         const newMin = parseInt(minHTML.value);
         if (newMin > -1)
@@ -208,10 +233,10 @@ function renderLoot()
           loot.min = newMin;
           if (loot.min > loot.max) loot.max = loot.min;
         }
-        render() 
       }
+      render() 
     };
-    maxHTML.oninput = () => {
+    maxHTML.onchange = () => {
       if (!isNaN(maxHTML.value)) {
         const newMax = parseInt(maxHTML.value);
         if (newMax > 0)
@@ -219,16 +244,28 @@ function renderLoot()
           loot.max = newMax;
           if (loot.max < loot.min) loot.min = loot.max;
         }
-        render()
       }
+      render()
+    };
+    chanceHTML.onchange = () => {
+      if (!isNaN(chanceHTML.value)) {
+        const newChance = parseFloat(chanceHTML.value);
+        if (newChance > 0)
+        {
+          loot.chance = newChance;
+        }
+      }
+      render()
     };
     minLabel.append(minHTML);
     maxLabel.append(maxHTML);
+    chanceLabel.append(chanceHTML);
 
     lootHTML.append(removeHTML);
     lootHTML.append(itemIdHTML);
     lootHTML.append(minLabel);
     lootHTML.append(maxLabel);
+    lootHTML.append(chanceLabel);
     lootList.append(lootHTML);
   });
 
@@ -239,27 +276,47 @@ function renderLoot()
     const optionHTML = document.createElement("option");
     optionHTML.innerText = room.id;
     if (room.id === currentRoom.nextId) optionHTML.selected = true;
-    lootNextId.onchange = (e) => { currentRoom.nextId = e.target.value; render(); };
+    lootNextId.onchange = (e) => { currentRoom.nextId = e.target.value === "exit to..." ? "leave" : e.target.value; render(); };
     lootNextId.append(optionHTML);
   });
 }
 
 
+const displayHTML = document.getElementById("room-preview");
+const jsonContainer = document.getElementById("json-container");
+const previewContainer = document.getElementById("event-container");
 const previewTitle = document.getElementById("event-title");
 const previewBody = document.getElementById("event-body");
 const previewLoot = document.getElementById("event-loot");
 const previewBtns = document.getElementById("event-btns");
 function renderPreview()
 {
+  // RENDER JSON
+  if (!isPreview)
+  {
+    jsonContainer.style.display = "block";
+    previewContainer.style.display = "none";
+    jsonContainer.innerText = toJSON();
+    return;
+  }
+  else
+  {
+    jsonContainer.style.display = "none";
+    previewContainer.style.display = "block";
+  }
+  
+  currentRoom.render();
+
+  // RENDER PREVIEW
   previewTitle.innerText = currentRoom.title.length === 0 ? "Empty" : currentRoom.title;
-  previewBody.innerText = currentRoom.body.length === 0 ? "Empty" : currentRoom.body;
+  previewBody.innerHTML = currentRoom.bodyRendered;
 
   // Event btns
   previewBtns.innerHTML = "";
   if (currentRoom.type === 0)
   {
-    currentRoom.corridores.forEach((corridore) => {
-      const forRoomIndex = rooms.findIndex((room) => room.id === corridore.for);
+    currentRoom.corridors.forEach((corridor) => {
+      const forRoomIndex = rooms.findIndex((room) => room.id === corridor.for);
       const forRoom = rooms[forRoomIndex];
       const btnHTML = document.createElement("li");
       const divOne = document.createElement("div");
@@ -268,31 +325,33 @@ function renderPreview()
       btnHTML.classList = "li-btn";
       divOne.classList = "divone-btn";
       divTwo.classList = "divtwo-btn";
-      btnText.onclick = () => { currentRoom = forRoom; render(); }
-      if (!corridore.req)
+      divTwo.onclick = () => { currentRoom = forRoom; render(); }
+      if (!corridor.req)
       {
-        btnText.innerText = corridore.text;
+        btnText.innerText = corridor.text;
     
         divTwo.append(btnText);
       }
       else
       {
-        btnText.innerText = corridore.text;
+        btnText.innerText = corridor.text;
         divTwo.append(btnText);
 
         const reqContainer = document.createElement("div");
         reqContainer.classList = "req-container";
         reqContainer.append(document.createElement("hr"));
+        if (corridor.reqForAll) reqContainer.innerHTML += "(required for everyone)<br>";
+        if (corridor.hide) reqContainer.innerHTML += "(hidden when locked)<br>";
         reqContainer.append("requires:");
         const ulHTML = document.createElement("ul");
-        corridore.reqItems.forEach((reqItem) => {
+        corridor.reqItems.forEach((reqItem) => {
           const liHTML = document.createElement("li");
           liHTML.innerText = `(${reqItem.count}x) ${reqItem.title}`;
           liHTML.style.marginLeft = "20px";
           ulHTML.append(liHTML);
         });
         reqContainer.append(ulHTML);
-        reqContainer.append(corridore.reqConsume ? "this item will be removed from your inventory" : "you will not lose this item.");
+        reqContainer.append(corridor.reqConsume ? "this item will be removed from your inventory" : "you will not lose this item.");
         divTwo.append(reqContainer);
       }
 
@@ -308,7 +367,7 @@ function renderPreview()
     const listHTML = document.createElement("ul");
     currentRoom.lootTable.forEach((loot) => {
       const lootHTML = document.createElement("li");
-      const chance = Math.max(100, loot.chance * 100);
+      const chance = Math.min(100, loot.chance * 100);
       const lootCount = loot.min === loot.max ? loot.min : `${loot.min}-${loot.max}`;
       lootHTML.innerText = `${chance}% chance of containing ${lootCount} ${loot.id}`;
       listHTML.append(lootHTML);
@@ -317,6 +376,8 @@ function renderPreview()
 
     if (!currentRoom.hasExit)
     {
+      const forRoomIndex = rooms.findIndex((room) => room.id === currentRoom.nextId);
+      const forRoom = rooms[forRoomIndex];
       const btnHTML = document.createElement("li");
       const divOne = document.createElement("div");
       const divTwo = document.createElement("div");
@@ -324,7 +385,8 @@ function renderPreview()
       btnHTML.classList = "li-btn";
       divOne.classList = "divone-btn";
       divTwo.classList = "divtwo-btn";
-      btnText.innerText = currentRoom.nextId;
+      btnText.innerText = "continue";
+      btnText.onclick = () => { currentRoom = forRoom; render(); }
 
       divTwo.append(btnText);
       divOne.append(divTwo);
@@ -351,7 +413,7 @@ function renderPreview()
 }
 
 const lootHTML = document.getElementById("loot-container");
-const corridoreHTML = document.getElementById("corridores-container");
+const corridorHTML = document.getElementById("corridors-container");
 function render()
 {
   renderRooms();
@@ -360,16 +422,16 @@ function render()
   
   if (currentRoom.type === 0)
   {
-    renderCorridores();
+    rendercorridors();
     lootHTML.style.display = "none";
-    corridoreHTML.style.display = "block";
+    corridorHTML.style.display = "block";
     previewLoot.style.display = "none";
   }
   else
   {
     renderLoot();
     lootHTML.style.display = "block";
-    corridoreHTML.style.display = "none";
+    corridorHTML.style.display = "none";
     previewLoot.style.display = "block";
   }
   
@@ -389,9 +451,51 @@ function selectRoom(room)
   render();
 }
 
+function save()
+{
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([toJSON()], {
+    type: "application/json"
+  }));
+  a.setAttribute("download", `${eventIdHTML.value}.json`);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function load(json)
+{
+  let eventObj = null;
+  try
+  {
+    eventObj = JSON.parse(json);
+    if (!eventObj.rooms.main) throw new Error("Missing main room");
+  }
+  catch(e)
+  {
+    alert("Event format is incorrect: (Check console)")
+    console.log(e);
+  }
+
+  if (!eventObj) return;
+
+  if (confirm("Event loaded. You will lose all current progress."))
+  {
+    eventIdHTML.value = eventObj.id;
+    eventWeightHTML.value = eventObj.weight;
+    rooms = [];
+    Object.values(eventObj.rooms).forEach((roomObj) => {
+      const newRoom = new Room(roomObj);
+      if (roomObj.id === "main") currentRoom = newRoom;
+      rooms.push(newRoom);
+    });
+    render();
+  }
+}
+
 const eventIdHTML = document.getElementById("event-id");
 const eventWeightHTML = document.getElementById("event-weight");
-function save()
+function toJSON()
 {
   const jsonObj = {};
   if (eventIdHTML.value.length === 0) return alert("an event name is required.");
@@ -413,14 +517,7 @@ function save()
 
   jsonObj.rooms = roomsObj
 
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(jsonObj, null, 2)], {
-    type: "application/json"
-  }));
-  a.setAttribute("download", `${jsonObj.id}.json`);
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  return JSON.stringify(jsonObj, null, 2);
 }
 
 function main()
@@ -461,8 +558,8 @@ isLootableHTML.onchange = (e) => {
   render();
 };
 
-document.getElementById("add-corridore-btn").onclick = () => {
-  currentRoom.addCorridore("", "corridore");
+document.getElementById("add-corridor-btn").onclick = () => {
+  currentRoom.addcorridor("", "corridor");
   render();
 };
 
@@ -481,6 +578,23 @@ document.getElementById("delete-room-btn").onclick = () => {
 }
 
 document.getElementById("save-btn").onclick = () => { save() };
+
+let isPreview = true;
+const viewBtn = document.getElementById("view-json-btn");
+viewBtn.onclick = () => { isPreview = !isPreview; viewBtn.innerText = isPreview ? "view json" : "view preview"; render(); };
+
+eventIdHTML.onchange = () => { if (!isPreview) render() };
+eventWeightHTML.onchange = () => { if (!isPreview) render() };
+
+document.getElementById("json-file").onchange = () => {
+  let file = document.querySelector("#json-file").files[0];
+  let reader = new FileReader();
+  reader.addEventListener('load', function(e) {
+        let text = e.target.result;
+        load(text);
+  });
+  reader.readAsText(file);
+};
 
 main();
 

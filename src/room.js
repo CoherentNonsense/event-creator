@@ -1,19 +1,63 @@
 class Room
 {
-  constructor()
+  constructor(fields = null)
   {
+
+    // Default
     this.id = "new-room" + Math.random().toString().slice(2, 6);
     this.title = "";
     this.body = "";
-    this.corridores = [];
+    this.visitedBody = "clone";
+    this.corridors = [];
     this.hasExit = false;
-    this.reqForAll = true;
     this.type = 0;
     
     // Lootable
-    this.nextId;
-    this.size;
+    this.nextId = "leave";
+    this.size = 10;
     this.lootTable = [];
+
+    this.bodyRendered = "";
+
+    // From Fields
+    if (fields !== null)
+    {
+      this.id = fields.id;
+      this.title = fields.title;
+      this.body = fields.body;
+      this.visitedBody = "clone";
+      this.corridors = [];
+      this.type = fields.loot ? 1 : 0;
+
+      if (this.type === 0)
+      {
+        fields.btns.forEach((corridor) => {
+          if (corridor === "leave")
+          {
+            this.hasExit = true;
+            return;
+          }
+
+          this.corridors.push({
+            for: corridor.for,
+            text: corridor.text,
+            req: corridor.req || false,
+            reqItems: corridor.reqItems || [],
+            reqConsume: corridor.reqConsume || false,
+            hide: corridor.hide || false,
+            reqForAll: corridor.reqForAll || false
+          });
+        });
+      }
+      else
+      {
+        this.nextId = fields.nextId;
+        this.size = fields.size;
+        fields.lootTable.forEach((loot) => {
+          this.lootTable.push(loot);
+        });
+      }
+    }
   }
 
   setId(id)
@@ -21,13 +65,13 @@ class Room
     this.id = id.replace(" ", "-");
   }
 
-  addCorridore(roomId, text, reqItems = [], reqConsume = false)
+  addcorridor(roomId, text)
   {
     if (this.type === 1)
     {
       if (this.nextId)
       {
-        alert(this.id + ": a loot room can only have 1 corridore.");
+        alert(this.id + ": a loot room can only have 1 corridor.");
         return;
       }
 
@@ -35,19 +79,19 @@ class Room
     }
     else
     {
-      let corridore = null;
-      corridore = { for: roomId, text, req: false, reqItems, reqConsume};
+      let corridor = null;
+      corridor = { for: roomId, text, req: false, reqItems: [], reqConsume: false, hide: false, reqForAll: false };
 
-      this.corridores.push(corridore);
+      this.corridors.push(corridor);
     }
   }
 
-  removeCorridore(roomId)
+  removecorridor(roomId)
   {
-    const corridoreIndex = this.corridores.findIndex((corridore) => {
-      corridore.for === roomId;
+    const corridorIndex = this.corridors.findIndex((corridor) => {
+      corridor.for === roomId;
     });
-    this.corridores.splice(corridoreIndex, 1);
+    this.corridors.splice(corridorIndex, 1);
   }
 
   setType(type)
@@ -69,34 +113,46 @@ class Room
     this.size = size;
   }
 
+  render()
+  {
+    if (this.body.length === 0) {
+      this.bodyRendered = "Empty";
+      return;
+    };
+
+    const regex = /```([\s\S]*?)```/g;
+    this.bodyRendered = currentRoom.body.length === 0 ? "Empty" : currentRoom.body.replace(regex,
+    "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
+  }
+
   generateJSON()
   {
+    this.render();
     const jsonObj = {};
     jsonObj.id = this.id;
     jsonObj.title = this.title;
-    jsonObj.body = this.body;
-    jsonObj.visitedBody = "clone";
+    jsonObj.body = this.bodyRendered;
+    if (this.visitedBody !== "clone") jsonObj.visitedBody = this.visitedBody;
 
     if (this.type === 0)
     {
-      jsonObj.loot = false;
       const btnsObj = [];
-      this.corridores.forEach((corridore) => {
+      this.corridors.forEach((corridor) => {
         const btnObj = {};
-        btnObj.for = corridore.for;
-        btnObj.text = corridore.text;
-        btnObj.req = corridore.req;
-        if (btnObj.req)
+        btnObj.for = corridor.for;
+        btnObj.text = corridor.text;
+        if (corridor.req)
         {
-          btnObj.reqItems = corridore.reqItems;
-          btnObj.reqConsume = corridore.reqConsume;
-          btnObj.reqForAll = this.reqForAll;
+          btnObj.req = corridor.req;
+          btnObj.reqItems = corridor.reqItems;
+          if (corridor.reqConsume) btnObj.reqConsume = corridor.reqConsume;
+          if (corridor.reqForAll) btnObj.reqForAll = corridor.reqForAll;
         }
-        if (corridore.lock)
+        if (corridor.lock)
         {
           btnObj.lock = true;
         }
-        if (corridore.hide)
+        if (corridor.hide)
         {
           btnObj.hide = true;
         }
@@ -112,7 +168,7 @@ class Room
     }
     else
     {
-      jsonObj.loot = false;
+      jsonObj.loot = true;
       jsonObj.nextId = this.nextId;
       jsonObj.size = this.size;
       jsonObj.lootTable = this.lootTable;

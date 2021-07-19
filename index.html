@@ -10,8 +10,10 @@
 <body>
   <div id="main">
     <div id="room-list-container">
-      <button id="save-btn">save</button>
-      <button id="new-room-btn">new room</button>
+      <button id="save-btn" class="hotbar">save</button>
+      <button id="view-json-btn" class="hotbar">view json</button>
+      <input type="file" id="json-file" class="hotbar" accept="application/json">
+      <button id="new-room-btn" class="hotbar">new room</button>
       <input id="event-id" placeholder="event-id">
       <input type="number" id="event-weight" placeholder="event-weight (number)">
       <div id="room-list"></div>
@@ -33,10 +35,10 @@
       </label>
       <hr>
       
-      <div id="corridores-container">
-        <div>room corridores</div>
-        <input type="button" id="add-corridore-btn" value="add corridore">
-        <div id="corridore-list"></div>
+      <div id="corridors-container">
+        <div>room corridors</div>
+        <input type="button" id="add-corridor-btn" value="add corridor">
+        <div id="corridor-list"></div>
       </div>
       
       <div id="loot-container">
@@ -54,6 +56,9 @@
       <button id="delete-room-btn">Delete Room</button>
     </div>
     <div id="room-preview">
+      <pre>
+        <code id="json-container"></code>
+      </pre>
       <div id="event-container">
         <div id="event-title"></div>
         <div id="event-body"></div>
