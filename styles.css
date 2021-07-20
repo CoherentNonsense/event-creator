@@ -45,9 +45,9 @@ label > p {
 }
 
 #room-list {
-  height: 75vh;
+  height: 78vh;
   position: absolute;
-  top: 25vh;
+  top: 32vh;
   padding: 10px;
   left: 0;
   box-sizing: border-box;
