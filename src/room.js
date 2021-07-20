@@ -24,7 +24,7 @@ class Room
     {
       this.id = fields.id;
       this.title = fields.title;
-      this.body = fields.body;
+      this.body = fields.body.replace(/\s?<span class="doc">\s?([\s\S]*)\s?<\/span>\s?/g, "\n```\n$1\n```\n");
       this.visitedBody = "clone";
       this.corridors = [];
       this.type = fields.loot ? 1 : 0;
@@ -120,7 +120,7 @@ class Room
       return;
     };
 
-    const regex = /```([\s\S]*?)```/g;
+    const regex = /\s?```\s?([\s\S]*)\s?```\s?/g;
     this.bodyRendered = this.body.length === 0 ? "Empty" : this.body.replace(regex,
     "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
   }
