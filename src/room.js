@@ -11,6 +11,8 @@ class Room
     this.corridors = [];
     this.hasExit = false;
     this.type = 0;
+    this.hasVisited = false;
+    this.visitTarget = "choose target..."
     
     // Lootable
     this.nextId = "leave";
@@ -18,6 +20,7 @@ class Room
     this.lootTable = [];
 
     this.bodyRendered = "";
+    this.visitedBodyRendered = "";
 
     // From Fields
     if (fields !== null)
@@ -25,7 +28,12 @@ class Room
       this.id = fields.id;
       this.title = fields.title;
       this.body = fields.body.replace(/\s?<span class="doc">\s?([\s\S]*)\s?<\/span>\s?/g, "\n```\n$1\n```\n");
-      this.visitedBody = "clone";
+      if (fields.visitedBody && fields.visitedBody != "clone") 
+      {
+        this.hasVisited = true;
+        this.visitTarget = fields.visitTarget;
+        this.visitedBody = fields.visitedBody.replace(/\s?<span class="doc">\s?([\s\S]*)\s?<\/span>\s?/g, "\n```\n$1\n```\n");
+      }
       this.corridors = [];
       this.type = fields.loot ? 1 : 0;
 
@@ -45,7 +53,9 @@ class Room
             reqItems: corridor.reqItems || [],
             reqConsume: corridor.reqConsume || false,
             hide: corridor.hide || false,
-            reqForAll: corridor.reqForAll || false
+            reqForAll: corridor.reqForAll || false,
+            reqTarget: corridor.reqForAll || "no target",
+            lockTarget: corridor.lockTarget || "no target",
           });
         });
       }
@@ -115,14 +125,23 @@ class Room
 
   render()
   {
-    if (this.body.length === 0) {
+    if (this.body.length === 0)
+    {
       this.bodyRendered = "Empty";
-      return;
-    };
+    }
+
+    if (this.body.length === 0)
+    {
+      this.visitedBodyRendered = "Empty";
+    }
 
     const regex = /\s?```\s?([\s\S]*)\s?```\s?/g;
     this.bodyRendered = this.body.length === 0 ? "Empty" : this.body.replace(regex,
     "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
+
+    this.visitedBodyRendered = this.body.length === 0 ? "Empty" : this.visitedBody.replace(regex,
+      "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
+  
   }
 
   generateJSON()
@@ -132,7 +151,11 @@ class Room
     jsonObj.id = this.id;
     jsonObj.title = this.title;
     jsonObj.body = this.bodyRendered;
-    if (this.visitedBody !== "clone") jsonObj.visitedBody = this.visitedBody;
+    if (this.hasVisited)
+    {
+      jsonObj.visitedBody = this.visitedBodyRendered;
+      jsonObj.visitTarget = (this.visitTarget && this.visitTarget !== "choose target...") ? this.visitTarget : this.id;
+    }
 
     if (this.type === 0)
     {
@@ -141,16 +164,15 @@ class Room
         const btnObj = {};
         btnObj.for = corridor.for;
         btnObj.text = corridor.text;
+
         if (corridor.req)
         {
           btnObj.req = corridor.req;
           btnObj.reqItems = corridor.reqItems;
           if (corridor.reqConsume) btnObj.reqConsume = corridor.reqConsume;
           if (corridor.reqForAll) btnObj.reqForAll = corridor.reqForAll;
-        }
-        if (corridor.lock)
-        {
-          btnObj.lock = true;
+          if (corridor.reqTarget && corridor.reqTarget !== "no target") btnObj.reqTarget = corridor.reqTarget;
+          if (corridor.lockTarget && corridor.lockTarget !== "no target") { btnObj.lock = true; btnObj.lockTarget = corridor.lockTarget; }
         }
         if (corridor.hide)
         {

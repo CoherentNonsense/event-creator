@@ -22,6 +22,7 @@ const titleInput = document.getElementById("room-title");
 const bodyInput = document.getElementById("room-body");
 const hasExitHTML = document.getElementById("room-has-exit");
 const isLootableHTML = document.getElementById("room-is-lootable");
+const hasVisitedHTML = document.getElementById("room-has-visited");
 function renderText()
 {
   idInput.value = currentRoom.id;
@@ -29,6 +30,7 @@ function renderText()
   bodyInput.value = currentRoom.body;
   hasExitHTML.checked = currentRoom.hasExit;
   isLootableHTML.checked = currentRoom.type === 1;
+  hasVisitedHTML.checked = currentRoom.hasVisited;
 }
 
 const corridorList = document.getElementById("corridor-list");
@@ -114,8 +116,41 @@ function rendercorridors()
       reqForAllHTML.checked = corridor.reqForAll;
       reqForAllHTML.onchange = (e) => { corridor.reqForAll = e.target.checked; render(); };
       corridorHTML.append(reqForAllLabel);
-  
+
+      // ReqTarget
+      const reqTargetLabel = document.createElement("label");
+      reqTargetLabel.innerText = "require target ";
+      const reqTargetHTML = document.createElement("select");
+      reqTargetHTML.innerHTML = "<option>no target</option>";
+      rooms.forEach((room) => {
+        if (room.id === currentRoom.id) return;
+        const optionHTML = document.createElement("option");
+        if (room.id === corridor.reqTarget) optionHTML.selected = "true";
+        optionHTML.innerHTML = room.id;
+        reqTargetHTML.append(optionHTML);
+      });
+      reqTargetHTML.onchange = (e) => { corridor.reqTarget = e.target.value; render(); };
+      reqTargetLabel.append(reqTargetHTML)
+      corridorHTML.append(reqTargetLabel);
+
+      // Lock Target
+      const lockTargetLabel = document.createElement("label");
+      lockTargetLabel.innerText = "lock target ";
+      const lockTargetHTML = document.createElement("select");
+      lockTargetHTML.innerHTML = "<option>no target</option>";
+      rooms.forEach((room) => {
+        if (room.id === currentRoom.id) return;
+        const optionHTML = document.createElement("option");
+        if (room.id === corridor.lockTarget) optionHTML.selected = "true";
+        optionHTML.innerHTML = room.id;
+        lockTargetHTML.append(optionHTML);
+      });
+      lockTargetHTML.onchange = (e) => { corridor.lockTarget = e.target.value; render(); };
+      lockTargetLabel.append(lockTargetHTML);
+      corridorHTML.append(lockTargetLabel);
+
       
+        
       // Items
       const addReqItem = document.createElement("input");
       addReqItem.type = "button";
@@ -281,6 +316,25 @@ function renderLoot()
   });
 }
 
+const hasVisitedContainerHTML = document.getElementById("has-visited-container");
+const visitedTargetHTML = document.getElementById("has-visited-target-select");
+const visitedBodyInput = document.getElementById("room-visited-body");
+function renderHasVisited()
+{
+  hasVisitedContainerHTML.style.display = currentRoom.hasVisited ? "block" : "none";
+
+  // Visited Target
+  visitedTargetHTML.innerHTML = "";
+  visitedTargetHTML.innerHTML = "<option>target...</option>";
+  rooms.forEach((room) => {
+    if (room.id === currentRoom.id) return;
+    const optionHTML = document.createElement("option");
+    if (room.id === currentRoom.visitTarget) optionHTML.selected = "true";
+    optionHTML.innerHTML = room.id;
+    visitedTargetHTML.append(optionHTML);
+  });
+  visitedTargetHTML.onchange = (e) => { currentRoom.visitTarget = e.target.value; render(); };
+}
 
 const displayHTML = document.getElementById("room-preview");
 const jsonContainer = document.getElementById("json-container");
@@ -310,6 +364,11 @@ function renderPreview()
   // RENDER PREVIEW
   previewTitle.innerText = currentRoom.title.length === 0 ? "Empty" : currentRoom.title;
   previewBody.innerHTML = currentRoom.bodyRendered;
+  if (currentRoom.hasVisited)
+  {
+    const visitTarget = (currentRoom.visitTarget && currentRoom.visitTarget !== "choose target...") ? currentRoom.visitTarget : "this room";
+    previewBody.innerHTML += `<div class="bold-n-spicy">after visiting ${visitTarget}:</div>${currentRoom.visitedBodyRendered}`;
+  }
 
   // Event btns
   previewBtns.innerHTML = "";
@@ -418,6 +477,7 @@ function render()
 {
   renderRooms();
   renderText();
+  renderHasVisited();
   renderPreview();
   
   if (currentRoom.type === 0)
@@ -547,6 +607,8 @@ document.getElementById("new-room-btn").onclick = () => {
 idInput.oninput = () => delayedRender(0, () => currentRoom.setId(idInput.value));
 titleInput.oninput = () => delayedRender(1, () => currentRoom.title = titleInput.value);
 bodyInput.oninput = () => delayedRender(2, () => currentRoom.body = bodyInput.value);
+visitedBodyInput.oninput = () => delayedRender(10, () => currentRoom.visitedBody = visitedBodyInput.value);
+visitedBodyInput.value = "";
 
 hasExitHTML.onchange = (e) => {
   currentRoom.hasExit = e.target.checked;
@@ -557,6 +619,11 @@ isLootableHTML.onchange = (e) => {
   currentRoom.type = e.target.checked ? 1 : 0;
   render();
 };
+
+hasVisitedHTML.onchange = (e) => {
+  currentRoom.hasVisited = e.target.checked;
+  render();
+}
 
 document.getElementById("add-corridor-btn").onclick = () => {
   currentRoom.addcorridor("", "corridor");

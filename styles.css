@@ -76,6 +76,12 @@ label > p {
   word-break: break-all;
 }
 
+.bold-n-spicy {
+  font-weight: bold;
+  margin-top: 1em;
+  font-size: 1.1em;
+}
+
 #current-room {
   padding: 10px;
   box-sizing: border-box;
