@@ -62,6 +62,11 @@ class Room
       else
       {
         this.nextId = fields.nextId;
+        if (this.nextId === "leave")
+        {
+          this.hasExit = true;
+        }
+        
         this.size = fields.size;
         fields.lootTable.forEach((loot) => {
           this.lootTable.push(loot);
