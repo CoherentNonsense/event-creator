@@ -54,7 +54,7 @@ class Room
             reqConsume: corridor.reqConsume || false,
             hide: corridor.hide || false,
             reqForAll: corridor.reqForAll || false,
-            reqTarget: corridor.reqForAll || "no target",
+            reqTarget: corridor.reqTarget || "no target",
             lockTarget: corridor.lockTarget || "no target",
           });
         });
@@ -66,7 +66,7 @@ class Room
         {
           this.hasExit = true;
         }
-        
+
         this.size = fields.size;
         fields.lootTable.forEach((loot) => {
           this.lootTable.push(loot);
