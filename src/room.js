@@ -135,17 +135,17 @@ class Room
       this.bodyRendered = "Empty";
     }
 
-    if (this.body.length === 0)
+    if (this.visitedBody.length === 0)
     {
       this.visitedBodyRendered = "Empty";
     }
 
     const regex = /\s?```\s?([\s\S]*)\s?```\s?/g;
     this.bodyRendered = this.body.length === 0 ? "Empty" : this.body.replace(regex,
-    "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
+    "<span class=\"doc\">$1</span>").replace(/[\n*]/g, "<br>");
 
     this.visitedBodyRendered = this.body.length === 0 ? "Empty" : this.visitedBody.replace(regex,
-      "<span class=\"doc\">$1</span>").replace(/[\n*]/g, " ");
+      "<span class=\"doc\">$1</span>").replace(/[\n*]/g, "<br>");
   
   }
 
