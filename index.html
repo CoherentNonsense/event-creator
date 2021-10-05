@@ -12,10 +12,18 @@
     <div id="room-list-container">
       <button id="save-btn" class="hotbar">save</button>
       <button id="view-json-btn" class="hotbar">view json</button>
-      <input type="file" id="json-file" class="hotbar" accept="application/json">
-      <button id="new-room-btn" class="hotbar">new room</button>
+        
+      <button class="hotbar" onclick="document.getElementById('json-file').click()">load event</button>
+      <input style="display: none" type="file" id="json-file" class="hotbar" accept="application/json">
+      
+      <button class="hotbar" onclick="document.getElementById('item-json-file').click()">load items</button>
+      <input style="display: none" type="file" id="item-json-file" class="hotbar" accept="application/json">
+      
       <input id="event-id" placeholder="event-id">
       <input type="number" id="event-weight" placeholder="event-weight (number)">
+      <hr>
+
+      <button id="new-room-btn" class="hotbar">new room</button>
       <div id="room-list"></div>
     </div>
     <div id="current-room">
@@ -82,6 +90,7 @@
     </div>
   </div>
 
+  <script src="src/items.js"></script>
   <script src="src/room.js"></script>
   <script src="src/index.js"></script>
 </body>

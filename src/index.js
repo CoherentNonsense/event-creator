@@ -238,10 +238,18 @@ function renderLoot()
       render();
     };
     //ID
-    const itemIdHTML = document.createElement("input");
-    itemIdHTML.placeholder = "item id";
-    itemIdHTML.value = loot.id;
-    itemIdHTML.onchange = () => { loot.id = itemIdHTML.value; render(); };
+    const itemIdHTML = document.createElement("select");
+    for (const itemId of Items.getItemIds())
+    {
+      const itemOptionHTML = document.createElement("option");
+      itemOptionHTML.innerHTML = itemId;
+      if (itemId == loot.id)
+      {
+        itemOptionHTML.selected = true;
+      }
+      itemIdHTML.append(itemOptionHTML);
+    }
+    itemIdHTML.onchange = (e) => { loot.id = e.target.value; render(); };
     // MIN/MAX/CHANCE
     const minLabel = document.createElement("label");
     const maxLabel = document.createElement("label");
@@ -653,12 +661,24 @@ viewBtn.onclick = () => { isPreview = !isPreview; viewBtn.innerText = isPreview 
 eventIdHTML.onchange = () => { if (!isPreview) render() };
 eventWeightHTML.onchange = () => { if (!isPreview) render() };
 
+// Load event json
 document.getElementById("json-file").onchange = () => {
   let file = document.querySelector("#json-file").files[0];
   let reader = new FileReader();
   reader.addEventListener('load', function(e) {
         let text = e.target.result;
         load(text);
+  });
+  reader.readAsText(file);
+};
+
+
+// Load item ids
+document.getElementById("item-json-file").onchange = () => {
+  let file = document.querySelector("#item-json-file").files[0];
+  let reader = new FileReader();
+  reader.addEventListener('load', function(e) {
+        Items.loadItemIds(e.target.result);
   });
   reader.readAsText(file);
 };
