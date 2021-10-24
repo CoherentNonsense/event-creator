@@ -142,11 +142,10 @@ class Room
 
     const regex = /\s?```\s?([\s\S]*)\s?```\s?/g;
     this.bodyRendered = this.body.length === 0 ? "Empty" : this.body.replace(regex,
-    "<span class=\"doc\">$1</span>").replace(/[\n*]/g, "<br>");
-
-    this.visitedBodyRendered = this.body.length === 0 ? "Empty" : this.visitedBody.replace(regex,
       "<span class=\"doc\">$1</span>").replace(/[\n*]/g, "<br>");
-  
+      
+      this.visitedBodyRendered = this.visitedBody.length === 0 ? "Empty" : this.visitedBody.replace(regex,
+        "<span class=\"doc\">$1</span>").replace(/[\n*]/g, "<br>");
   }
 
   generateJSON()

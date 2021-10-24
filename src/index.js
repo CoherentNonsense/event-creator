@@ -332,6 +332,7 @@ function renderHasVisited()
   hasVisitedContainerHTML.style.display = currentRoom.hasVisited ? "block" : "none";
 
   // Visited Target
+  visitedBodyInput.value = currentRoom.visitedBody;
   visitedTargetHTML.innerHTML = "";
   visitedTargetHTML.innerHTML = "<option>target...</option>";
   rooms.forEach((room) => {
